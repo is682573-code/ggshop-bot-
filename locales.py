@@ -56,6 +56,26 @@ TEXTS = {
         "btn_channel": "📢 Наш ТГК",
         "btn_ultimate": "👑 Ultimate",
         "btn_base": "⚡ Base",
+        "order_summary": (
+            "🛒 <b>Твой заказ:</b>\n\n"
+            "📦 Тариф: <b>{plan}</b>\n"
+            "⏳ Период: <b>{period}</b>\n"
+            "💳 Сумма: <b>{price} руб.</b>\n\n"
+            "Нажми кнопку ниже чтобы оплатить 👇"
+        ),
+        "payment_confirmed_enter_roblox": (
+            "✅ <b>Оплата подтверждена!</b>\n\n"
+            "Теперь введи свой <b>Roblox username</b> — "
+            "именно его бот добавит в список доступа:\n\n"
+            "👤 Напиши своё имя в Roblox:"
+        ),
+        "payment_pending": (
+            "⏳ <b>Ожидаем оплату...</b>\n\n"
+            "Оплати по кнопке выше, затем нажми «Проверить оплату» снова.\n"
+            "Обычно подтверждение приходит за 1-2 минуты."
+        ),
+        "payment_pending_alert": "⏳ Оплата ещё не пришла. Подожди 1-2 минуты и проверь снова.",
+        "payment_not_found": "❌ Оплата не найдена. Обратись в поддержку: {support}",
         "admin_only": "⛔ Нет доступа.",
         "key_added": "✅ Ключ добавлен на key-сервер для <b>{username}</b>",
         "key_error": "⚠️ Ошибка при добавлении ключа. Добавь вручную: <code>{username}</code>",
@@ -117,6 +137,26 @@ TEXTS = {
         "btn_channel": "📢 Our channel",
         "btn_ultimate": "👑 Ultimate",
         "btn_base": "⚡ Base",
+        "order_summary": (
+            "🛒 <b>Your order:</b>\n\n"
+            "📦 Plan: <b>{plan}</b>\n"
+            "⏳ Period: <b>{period}</b>\n"
+            "💳 Price: <b>{price} RUB</b>\n\n"
+            "Click the button below to pay 👇"
+        ),
+        "payment_confirmed_enter_roblox": (
+            "✅ <b>Payment confirmed!</b>\n\n"
+            "Now enter your <b>Roblox username</b> — "
+            "it will be added to the access list:\n\n"
+            "👤 Type your Roblox name:"
+        ),
+        "payment_pending": (
+            "⏳ <b>Waiting for payment...</b>\n\n"
+            "Pay using the button above, then click «Check payment» again.\n"
+            "Confirmation usually takes 1-2 minutes."
+        ),
+        "payment_pending_alert": "⏳ Payment not received yet. Wait 1-2 minutes and check again.",
+        "payment_not_found": "❌ Payment not found. Contact support: {support}",
         "admin_only": "⛔ Access denied.",
         "key_added": "✅ Key added to key-server for <b>{username}</b>",
         "key_error": "⚠️ Error adding key. Add manually: <code>{username}</code>",
