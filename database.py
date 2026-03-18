@@ -62,4 +62,4 @@ async def get_user_lang(tg_id: int) -> str:
     pool = await get_pool()
     async with pool.acquire() as conn:
         row = await conn.fetchrow("SELECT lang FROM users WHERE tg_id=$1", tg_id)
-        return row["lang"] if row el
+        return row["lang"] if row else "ru"
