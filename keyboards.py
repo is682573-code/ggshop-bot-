@@ -44,10 +44,11 @@ def periods_keyboard(plan: str, lang: str) -> InlineKeyboardMarkup:
 
 
 def confirm_keyboard(plan: str, days: str, lang: str) -> InlineKeyboardMarkup:
+    price = PLANS[plan][days]
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=t("confirm_yes", lang), callback_data=f"confirm:{plan}:{days}")],
-        [InlineKeyboardButton(text=t("confirm_no", lang),  callback_data=f"plan:{plan}")],
-        [InlineKeyboardButton(text=t("back", lang),        callback_data="menu:plans")],
+        [InlineKeyboardButton(text=t("pay_button", lang, price=price), callback_data=f"confirm:{plan}:{days}")],
+        [InlineKeyboardButton(text=t("confirm_no", lang), callback_data=f"plan:{plan}")],
+        [InlineKeyboardButton(text=t("back", lang), callback_data="menu:plans")],
     ])
 
 
