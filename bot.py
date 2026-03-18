@@ -35,24 +35,24 @@ async def on_shutdown(bot: Bot):
 
 
 async def main():
-    bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-    dp  = Dispatcher(storage=MemoryStorage())
+    bot = Bot(
+        token=BOT_TOKEN,
+        default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+    )
+    dp = Dispatcher(storage=MemoryStorage())
 
     dp.include_router(start_router)
     dp.include_router(shop_router)
     dp.include_router(admin_router)
 
     if WEBHOOK_URL:
-        # ── Webhook mode (Railway) ───────────────────────────
         from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 
         app = web.Application()
-        app["bot"] = bot  # для yoomoney_webhook
+        app["bot"] = bot
 
-        # YooMoney уведомления
         app.router.add_post("/yoomoney", yoomoney_webhook)
 
-        # Telegram webhook
         SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH + "/bot")
         setup_application(app, dp, bot=bot)
 
@@ -64,11 +64,9 @@ async def main():
         logger.info(f"🚀 Bot running on {WEBAPP_HOST}:{WEBAPP_PORT}")
         await site.start()
 
-        # Держим сервер живым
         await asyncio.Event().wait()
 
     else:
-        # ── Polling mode (локальная разработка) ─────────────
         await on_startup(bot)
         logger.info("🔄 Polling mode started")
         await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
