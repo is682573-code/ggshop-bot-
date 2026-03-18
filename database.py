@@ -1,6 +1,5 @@
 import asyncpg
 import logging
-from datetime import datetime
 from config import DATABASE_URL
 
 logger = logging.getLogger(__name__)
@@ -41,8 +40,6 @@ async def init_db():
     logger.info("✅ Database initialized")
 
 
-# ─── Users ────────────────────────────────────────────────────
-
 async def upsert_user(tg_id: int, username: str = None, lang: str = None):
     pool = await get_pool()
     async with pool.acquire() as conn:
@@ -65,63 +62,4 @@ async def get_user_lang(tg_id: int) -> str:
     pool = await get_pool()
     async with pool.acquire() as conn:
         row = await conn.fetchrow("SELECT lang FROM users WHERE tg_id=$1", tg_id)
-        return row["lang"] if row else "ru"
-
-
-# ─── Purchases ────────────────────────────────────────────────
-
-async def create_purchase(tg_id: int, roblox_user: str, plan: str,
-                           days: str, price: int, label: str) -> int:
-    pool = await get_pool()
-    async with pool.acquire() as conn:
-        row = await conn.fetchrow(
-            """INSERT INTO purchases (tg_id, roblox_user, plan, days, price, payment_label)
-               VALUES ($1,$2,$3,$4,$5,$6) RETURNING id""",
-            tg_id, roblox_user, plan, days, price, label
-        )
-        return row["id"]
-
-
-async def get_purchase_by_label(label: str):
-    pool = await get_pool()
-    async with pool.acquire() as conn:
-        return await conn.fetchrow(
-            "SELECT * FROM purchases WHERE payment_label=$1", label
-        )
-
-
-async def mark_paid(label: str):
-    pool = await get_pool()
-    async with pool.acquire() as conn:
-        await conn.execute(
-            "UPDATE purchases SET status='paid', paid_at=NOW() WHERE payment_label=$1",
-            label
-        )
-
-
-async def update_roblox_username(label: str, roblox_user: str):
-    pool = await get_pool()
-    async with pool.acquire() as conn:
-        await conn.execute(
-            "UPDATE purchases SET roblox_user=$1 WHERE payment_label=$2",
-            roblox_user, label
-        )
-
-
-# ─── Stats ────────────────────────────────────────────────────
-
-async def get_stats() -> dict:
-    pool = await get_pool()
-    async with pool.acquire() as conn:
-        total_users   = await conn.fetchval("SELECT COUNT(*) FROM users")
-        total_sales   = await conn.fetchval("SELECT COUNT(*) FROM purchases WHERE status='paid'")
-        total_revenue = await conn.fetchval("SELECT COALESCE(SUM(price),0) FROM purchases WHERE status='paid'")
-        today_sales   = await conn.fetchval(
-            "SELECT COUNT(*) FROM purchases WHERE status='paid' AND paid_at::date=CURRENT_DATE"
-        )
-        return {
-            "users": total_users,
-            "sales": total_sales,
-            "revenue": total_revenue,
-            "today": today_sales,
-        }
+        return row["lang"] if row el
