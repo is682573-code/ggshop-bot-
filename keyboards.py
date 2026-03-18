@@ -29,25 +29,53 @@ def plans_keyboard(lang: str) -> InlineKeyboardMarkup:
     ])
 
 
-def periods_keyboard(plan: str, lang: str) -> InlineKeyboardMarkup:
+def currency_keyboard(plan: str, lang: str) -> InlineKeyboardMarkup:
+    text = "💰 В какой валюте оплатить?\n(GGshop использует ЮMoney)"
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="🇷🇺 RUB ₽", callback_data=f"currency:{plan}:RUB"),
+            InlineKeyboardButton(text="🇺🇸 USD $", callback_data=f"currency:{plan}:USD"),
+            InlineKeyboardButton(text="🇪🇺 EUR €", callback_data=f"currency:{plan}:EUR"),
+        ],
+        [InlineKeyboardButton(text=t("back", lang), callback_data="menu:plans")],
+    ])
+
+
+def periods_keyboard(plan: str, lang: str, currency: str = "RUB") -> InlineKeyboardMarkup:
+    from config import CURRENCY_RATES, CURRENCY_SYMBOLS
     rows = []
-    for days, price in PLANS[plan].items():
+    for days, price_rub in PLANS[plan].items():
         if days == "name":
             continue
         label = DAYS_LABEL[days][lang]
+        rate = CURRENCY_RATES.get(currency, 1.0)
+        symbol = CURRENCY_SYMBOLS.get(currency, "₽")
+        if currency == "RUB":
+            price_str = f"{price_rub} {symbol}"
+        else:
+            converted = round(price_rub * rate, 2)
+            price_str = f"{converted} {symbol}"
         rows.append([InlineKeyboardButton(
-            text=f"{label} — {price} руб.",
-            callback_data=f"period:{plan}:{days}"
+            text=f"{label} — {price_str}",
+            callback_data=f"period:{plan}:{days}:{currency}"
         )])
-    rows.append([InlineKeyboardButton(text=t("back", lang), callback_data="menu:plans")])
+    rows.append([InlineKeyboardButton(text=t("back", lang), callback_data=f"plan:{plan}")])
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
-def confirm_keyboard(plan: str, days: str, lang: str) -> InlineKeyboardMarkup:
-    price = PLANS[plan][days]
+def confirm_keyboard(plan: str, days: str, lang: str, currency: str = "RUB") -> InlineKeyboardMarkup:
+    from config import CURRENCY_RATES, CURRENCY_SYMBOLS
+    price_rub = PLANS[plan][days]
+    rate = CURRENCY_RATES.get(currency, 1.0)
+    symbol = CURRENCY_SYMBOLS.get(currency, "₽")
+    if currency == "RUB":
+        price_str = f"{price_rub} {symbol}"
+    else:
+        converted = round(price_rub * rate, 2)
+        price_str = f"{converted} {symbol}"
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=t("pay_button", lang, price=price), callback_data=f"confirm:{plan}:{days}")],
-        [InlineKeyboardButton(text=t("confirm_no", lang), callback_data=f"plan:{plan}")],
+        [InlineKeyboardButton(text=f"💳 Оплатить {price_str}", callback_data=f"confirm:{plan}:{days}:{currency}")],
+        [InlineKeyboardButton(text=t("confirm_no", lang), callback_data=f"currency:{plan}:{currency}")],
         [InlineKeyboardButton(text=t("back", lang), callback_data="menu:plans")],
     ])
 
