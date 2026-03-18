@@ -4,9 +4,9 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
-from config import PLANS, DAYS_LABEL, ADMIN_ID, ADMIN_USERNAME, SUPPORT_USERNAME_2
+from config import PLANS, DAYS_LABEL, ADMIN_ID, ADMIN_USERNAME, CURRENCY_RATES, CURRENCY_SYMBOLS
 from database import get_user_lang, create_purchase, get_purchase_by_label, mark_paid, update_roblox_username
-from keyboards import plans_keyboard, periods_keyboard, confirm_keyboard, pay_keyboard, back_keyboard
+from keyboards import plans_keyboard, currency_keyboard, periods_keyboard, confirm_keyboard, pay_keyboard, back_keyboard
 from locales import t
 from payments import generate_label, build_payment_url, add_key_to_server
 
@@ -17,6 +17,8 @@ logger = logging.getLogger(__name__)
 class PurchaseState(StatesGroup):
     waiting_roblox_after_pay = State()
 
+
+# ─── Выбор тарифа ────────────────────────────────────────────
 
 @router.callback_query(F.data == "menu:plans")
 async def show_plans(call: CallbackQuery, state: FSMContext):
@@ -35,40 +37,67 @@ async def show_plans(call: CallbackQuery, state: FSMContext):
 async def show_plan_detail(call: CallbackQuery, state: FSMContext):
     plan = call.data.split(":")[1]
     lang = await get_user_lang(call.from_user.id)
-    text_key = f"plan_{plan}"
+    await state.update_data(plan=plan)
     await call.message.delete()
     await call.message.answer(
-        t(text_key, lang),
+        t(f"plan_{plan}", lang),
         parse_mode="HTML",
-        reply_markup=periods_keyboard(plan, lang)
+        reply_markup=currency_keyboard(plan, lang)
+    )
+    await call.answer()
+
+
+@router.callback_query(F.data.startswith("currency:"))
+async def choose_currency(call: CallbackQuery, state: FSMContext):
+    _, plan, currency = call.data.split(":")
+    lang = await get_user_lang(call.from_user.id)
+    await state.update_data(plan=plan, currency=currency)
+    symbol = CURRENCY_SYMBOLS.get(currency, "₽")
+    await call.message.delete()
+    await call.message.answer(
+        t("choose_period", lang, currency=currency, symbol=symbol),
+        parse_mode="HTML",
+        reply_markup=periods_keyboard(plan, lang, currency)
     )
     await call.answer()
 
 
 @router.callback_query(F.data.startswith("period:"))
 async def choose_period(call: CallbackQuery, state: FSMContext):
-    _, plan, days = call.data.split(":")
+    parts = call.data.split(":")
+    plan, days, currency = parts[1], parts[2], parts[3] if len(parts) > 3 else "RUB"
     lang = await get_user_lang(call.from_user.id)
-    price = PLANS[plan][days]
+
+    price_rub = PLANS[plan][days]
+    rate = CURRENCY_RATES.get(currency, 1.0)
+    symbol = CURRENCY_SYMBOLS.get(currency, "₽")
     period = DAYS_LABEL[days][lang]
     plan_name = PLANS[plan]["name"]
 
-    await state.update_data(plan=plan, days=days)
+    if currency == "RUB":
+        price_str = f"{price_rub} {symbol}"
+    else:
+        converted = round(price_rub * rate, 2)
+        price_str = f"{converted} {symbol}"
+
+    await state.update_data(plan=plan, days=days, currency=currency)
 
     await call.message.delete()
     await call.message.answer(
-        t("order_summary", lang, plan=plan_name, period=period, price=price),
+        t("order_summary", lang, plan=plan_name, period=period, price=price_str),
         parse_mode="HTML",
-        reply_markup=confirm_keyboard(plan, days, lang)
+        reply_markup=confirm_keyboard(plan, days, lang, currency)
     )
     await call.answer()
 
 
 @router.callback_query(F.data.startswith("confirm:"))
 async def confirm_and_pay(call: CallbackQuery, state: FSMContext):
-    _, plan, days = call.data.split(":")
+    parts = call.data.split(":")
+    plan, days, currency = parts[1], parts[2], parts[3] if len(parts) > 3 else "RUB"
     lang = await get_user_lang(call.from_user.id)
-    price = PLANS[plan][days]
+
+    price_rub = PLANS[plan][days]
     period = DAYS_LABEL[days][lang]
     plan_name = PLANS[plan]["name"]
 
@@ -78,20 +107,20 @@ async def confirm_and_pay(call: CallbackQuery, state: FSMContext):
         roblox_user="PENDING",
         plan=plan,
         days=days,
-        price=price,
+        price=price_rub,
         label=label
     )
-    await state.update_data(label=label, plan=plan, days=days)
+    await state.update_data(label=label, plan=plan, days=days, currency=currency)
 
     pay_url = build_payment_url(
-        amount=price,
+        amount=price_rub,
         label=label,
         comment=f"GGshop {plan_name} {period}"
     )
 
     await call.message.delete()
     await call.message.answer(
-        t("pay_instruction", lang, price=price),
+        t("pay_instruction", lang, price=price_rub),
         parse_mode="HTML",
         reply_markup=pay_keyboard(pay_url, lang)
     )
@@ -118,7 +147,6 @@ async def check_payment(call: CallbackQuery, state: FSMContext):
         return
 
     if purchase["status"] == "paid":
-        # Оплата есть — просим username
         await call.message.delete()
         await call.message.answer(
             t("payment_confirmed_enter_roblox", lang),
@@ -128,7 +156,6 @@ async def check_payment(call: CallbackQuery, state: FSMContext):
         await call.answer()
         return
 
-    # Оплата ещё не пришла
     await call.answer(t("payment_pending_alert", lang), show_alert=True)
 
 
@@ -175,7 +202,7 @@ async def receive_roblox_after_pay(message: Message, state: FSMContext):
         f"🎮 Roblox: <code>{roblox}</code>\n"
         f"📦 Тариф: {plan_name}\n"
         f"⏳ Период: {period}\n"
-        f"💳 Сумма: {purchase['price']} руб.\n\n"
+        f"💳 Сумма: {purchase['price']} ₽\n\n"
         f"{key_status}",
         parse_mode="HTML"
     )
