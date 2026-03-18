@@ -56,6 +56,9 @@ TEXTS = {
         "btn_channel": "📢 Наш ТГК",
         "btn_ultimate": "👑 Ultimate",
         "btn_base": "⚡ Base",
+        "choose_period": (
+            "⏳ Выбери период оплаты ({currency} {symbol}):"
+        ),
         "order_summary": (
             "🛒 <b>Твой заказ:</b>\n\n"
             "📦 Тариф: <b>{plan}</b>\n"
@@ -137,6 +140,12 @@ TEXTS = {
         "btn_channel": "📢 Our channel",
         "btn_ultimate": "👑 Ultimate",
         "btn_base": "⚡ Base",
+        "choose_period": (
+            "⏳ Выбери период оплаты ({currency} {symbol}):"
+        ),
+        "choose_period": (
+            "⏳ Choose payment period ({currency} {symbol}):"
+        ),
         "order_summary": (
             "🛒 <b>Your order:</b>\n\n"
             "📦 Plan: <b>{plan}</b>\n"
