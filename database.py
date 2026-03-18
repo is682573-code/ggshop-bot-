@@ -99,6 +99,15 @@ async def mark_paid(label: str):
         )
 
 
+async def update_roblox_username(label: str, roblox_user: str):
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        await conn.execute(
+            "UPDATE purchases SET roblox_user=$1 WHERE payment_label=$2",
+            roblox_user, label
+        )
+
+
 # ─── Stats ────────────────────────────────────────────────────
 
 async def get_stats() -> dict:
