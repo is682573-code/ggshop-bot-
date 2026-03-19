@@ -18,7 +18,15 @@ class PurchaseState(StatesGroup):
     waiting_roblox_after_pay = State()
 
 
-# ─── Выбор тарифа ────────────────────────────────────────────
+def format_price(price_rub: int, currency: str) -> str:
+    """Форматирует цену в нужной валюте без лишних слов."""
+    symbol = CURRENCY_SYMBOLS.get(currency, "₽")
+    if currency == "RUB":
+        return f"{price_rub} {symbol}"
+    rate = CURRENCY_RATES.get(currency, 1.0)
+    converted = round(price_rub * rate, 2)
+    return f"{converted} {symbol}"
+
 
 @router.callback_query(F.data == "menu:plans")
 async def show_plans(call: CallbackQuery, state: FSMContext):
@@ -69,19 +77,11 @@ async def choose_period(call: CallbackQuery, state: FSMContext):
     lang = await get_user_lang(call.from_user.id)
 
     price_rub = PLANS[plan][days]
-    rate = CURRENCY_RATES.get(currency, 1.0)
-    symbol = CURRENCY_SYMBOLS.get(currency, "₽")
     period = DAYS_LABEL[days][lang]
     plan_name = PLANS[plan]["name"]
-
-    if currency == "RUB":
-        price_str = f"{price_rub} {symbol}"
-    else:
-        converted = round(price_rub * rate, 2)
-        price_str = f"{converted} {symbol}"
+    price_str = format_price(price_rub, currency)  # БАГ 1 ИСПРАВЛЕН: без "руб."
 
     await state.update_data(plan=plan, days=days, currency=currency)
-
     await call.message.delete()
     await call.message.answer(
         t("order_summary", lang, plan=plan_name, period=period, price=price_str),
@@ -100,6 +100,7 @@ async def confirm_and_pay(call: CallbackQuery, state: FSMContext):
     price_rub = PLANS[plan][days]
     period = DAYS_LABEL[days][lang]
     plan_name = PLANS[plan]["name"]
+    price_str = format_price(price_rub, currency)  # БАГ 2 ИСПРАВЛЕН: правильная валюта
 
     label = generate_label()
     await create_purchase(
@@ -120,7 +121,7 @@ async def confirm_and_pay(call: CallbackQuery, state: FSMContext):
 
     await call.message.delete()
     await call.message.answer(
-        t("pay_instruction", lang, price=price_rub),
+        t("pay_instruction", lang, price=price_str),
         parse_mode="HTML",
         reply_markup=pay_keyboard(pay_url, lang)
     )
