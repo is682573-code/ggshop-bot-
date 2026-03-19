@@ -11,29 +11,33 @@ TEXTS = {
         "plan_ultimate": (
             "👑 <b>Ultimate</b>\n\n"
             "<i>Описание будет добавлено позже...</i>\n\n"
-            "💰 Выбери период:"
+            "💰 Выбери валюту оплаты:"
         ),
         "plan_base": (
             "⚡ <b>Base</b>\n\n"
             "<i>Описание будет добавлено позже...</i>\n\n"
-            "💰 Выбери период:"
+            "💰 Выбери валюту оплаты:"
         ),
-        "enter_roblox": "👤 Введи свой <b>Roblox username</b>:",
-        "roblox_confirm": (
-            "✅ Проверь данные:\n\n"
+        "choose_period": "⏳ Выбери период ({currency} {symbol}):",
+        "order_summary": (
+            "🛒 <b>Твой заказ:</b>\n\n"
             "📦 Тариф: <b>{plan}</b>\n"
             "⏳ Период: <b>{period}</b>\n"
-            "💳 Сумма: <b>{price} руб.</b>\n"
-            "👤 Roblox: <b>{username}</b>\n\n"
-            "Всё верно?"
+            "💳 Сумма: <b>{price}</b>\n\n"
+            "Нажми кнопку ниже чтобы оплатить 👇"
         ),
-        "pay_button": "💳 Оплатить {price} руб.",
         "pay_instruction": (
             "💳 <b>Оплата через ЮМани</b>\n\n"
             "1️⃣ Нажми кнопку ниже — откроется страница оплаты\n"
-            "2️⃣ Оплати <b>{price} руб.</b>\n"
+            "2️⃣ Оплати <b>{price}</b>\n"
             "3️⃣ Вернись сюда — ключ придёт автоматически ✅\n\n"
             "⏱ Ожидание подтверждения до 5 минут"
+        ),
+        "payment_confirmed_enter_roblox": (
+            "✅ <b>Оплата подтверждена!</b>\n\n"
+            "Теперь введи свой <b>Roblox username</b> — "
+            "именно его бот добавит в список доступа:\n\n"
+            "👤 Напиши своё имя в Roblox:"
         ),
         "payment_success": (
             "✅ <b>Оплата прошла успешно!</b>\n\n"
@@ -43,12 +47,13 @@ TEXTS = {
             "🎮 Вставь username в скрипт и наслаждайся!\n"
             "📞 Поддержка: {support}"
         ),
+        "payment_pending_alert": "⏳ Оплата ещё не пришла. Подожди 1-2 минуты и проверь снова.",
+        "payment_not_found": "❌ Оплата не найдена. Обратись в поддержку: {support}",
         "payment_failed": "❌ Оплата не найдена. Попробуй снова или обратись в поддержку: {support}",
         "faq": "❓ <b>FAQ</b>\n\n<i>Скоро...</i>",
         "support": "📞 <b>Поддержка:</b>\n\n👤 {admin}\n👤 {support2}",
         "channel": "📢 Наш канал:\n\n{link}",
         "back": "← Назад",
-        "confirm_yes": "✅ Да, оплатить",
         "confirm_no": "❌ Изменить",
         "btn_plans": "🛒 Выбрать тариф",
         "btn_faq": "❓ FAQ",
@@ -56,29 +61,6 @@ TEXTS = {
         "btn_channel": "📢 Наш ТГК",
         "btn_ultimate": "👑 Ultimate",
         "btn_base": "⚡ Base",
-        "choose_period": (
-            "⏳ Выбери период оплаты ({currency} {symbol}):"
-        ),
-        "order_summary": (
-            "🛒 <b>Твой заказ:</b>\n\n"
-            "📦 Тариф: <b>{plan}</b>\n"
-            "⏳ Период: <b>{period}</b>\n"
-            "💳 Сумма: <b>{price} руб.</b>\n\n"
-            "Нажми кнопку ниже чтобы оплатить 👇"
-        ),
-        "payment_confirmed_enter_roblox": (
-            "✅ <b>Оплата подтверждена!</b>\n\n"
-            "Теперь введи свой <b>Roblox username</b> — "
-            "именно его бот добавит в список доступа:\n\n"
-            "👤 Напиши своё имя в Roblox:"
-        ),
-        "payment_pending": (
-            "⏳ <b>Ожидаем оплату...</b>\n\n"
-            "Оплати по кнопке выше, затем нажми «Проверить оплату» снова.\n"
-            "Обычно подтверждение приходит за 1-2 минуты."
-        ),
-        "payment_pending_alert": "⏳ Оплата ещё не пришла. Подожди 1-2 минуты и проверь снова.",
-        "payment_not_found": "❌ Оплата не найдена. Обратись в поддержку: {support}",
         "admin_only": "⛔ Нет доступа.",
         "key_added": "✅ Ключ добавлен на key-сервер для <b>{username}</b>",
         "key_error": "⚠️ Ошибка при добавлении ключа. Добавь вручную: <code>{username}</code>",
@@ -95,29 +77,33 @@ TEXTS = {
         "plan_ultimate": (
             "👑 <b>Ultimate</b>\n\n"
             "<i>Description coming soon...</i>\n\n"
-            "💰 Choose period:"
+            "💰 Choose payment currency:"
         ),
         "plan_base": (
             "⚡ <b>Base</b>\n\n"
             "<i>Description coming soon...</i>\n\n"
-            "💰 Choose period:"
+            "💰 Choose payment currency:"
         ),
-        "enter_roblox": "👤 Enter your <b>Roblox username</b>:",
-        "roblox_confirm": (
-            "✅ Confirm your order:\n\n"
+        "choose_period": "⏳ Choose period ({currency} {symbol}):",
+        "order_summary": (
+            "🛒 <b>Your order:</b>\n\n"
             "📦 Plan: <b>{plan}</b>\n"
             "⏳ Period: <b>{period}</b>\n"
-            "💳 Price: <b>{price} RUB</b>\n"
-            "👤 Roblox: <b>{username}</b>\n\n"
-            "Everything correct?"
+            "💳 Price: <b>{price}</b>\n\n"
+            "Click the button below to pay 👇"
         ),
-        "pay_button": "💳 Pay {price} RUB",
         "pay_instruction": (
             "💳 <b>Payment via YooMoney</b>\n\n"
             "1️⃣ Click the button below — payment page will open\n"
-            "2️⃣ Pay <b>{price} RUB</b>\n"
+            "2️⃣ Pay <b>{price}</b>\n"
             "3️⃣ Come back here — key will be sent automatically ✅\n\n"
             "⏱ Confirmation within 5 minutes"
+        ),
+        "payment_confirmed_enter_roblox": (
+            "✅ <b>Payment confirmed!</b>\n\n"
+            "Now enter your <b>Roblox username</b> — "
+            "it will be added to the access list:\n\n"
+            "👤 Type your Roblox name:"
         ),
         "payment_success": (
             "✅ <b>Payment successful!</b>\n\n"
@@ -127,12 +113,13 @@ TEXTS = {
             "🎮 Use your username in the script and enjoy!\n"
             "📞 Support: {support}"
         ),
+        "payment_pending_alert": "⏳ Payment not received yet. Wait 1-2 minutes and check again.",
+        "payment_not_found": "❌ Payment not found. Contact support: {support}",
         "payment_failed": "❌ Payment not found. Try again or contact support: {support}",
         "faq": "❓ <b>FAQ</b>\n\n<i>Coming soon...</i>",
         "support": "📞 <b>Support:</b>\n\n👤 {admin}\n👤 {support2}",
         "channel": "📢 Our channel:\n\n{link}",
         "back": "← Back",
-        "confirm_yes": "✅ Yes, pay",
         "confirm_no": "❌ Change",
         "btn_plans": "🛒 Choose plan",
         "btn_faq": "❓ FAQ",
@@ -140,32 +127,6 @@ TEXTS = {
         "btn_channel": "📢 Our channel",
         "btn_ultimate": "👑 Ultimate",
         "btn_base": "⚡ Base",
-        "choose_period": (
-            "⏳ Выбери период оплаты ({currency} {symbol}):"
-        ),
-        "choose_period": (
-            "⏳ Choose payment period ({currency} {symbol}):"
-        ),
-        "order_summary": (
-            "🛒 <b>Your order:</b>\n\n"
-            "📦 Plan: <b>{plan}</b>\n"
-            "⏳ Period: <b>{period}</b>\n"
-            "💳 Price: <b>{price} RUB</b>\n\n"
-            "Click the button below to pay 👇"
-        ),
-        "payment_confirmed_enter_roblox": (
-            "✅ <b>Payment confirmed!</b>\n\n"
-            "Now enter your <b>Roblox username</b> — "
-            "it will be added to the access list:\n\n"
-            "👤 Type your Roblox name:"
-        ),
-        "payment_pending": (
-            "⏳ <b>Waiting for payment...</b>\n\n"
-            "Pay using the button above, then click «Check payment» again.\n"
-            "Confirmation usually takes 1-2 minutes."
-        ),
-        "payment_pending_alert": "⏳ Payment not received yet. Wait 1-2 minutes and check again.",
-        "payment_not_found": "❌ Payment not found. Contact support: {support}",
         "admin_only": "⛔ Access denied.",
         "key_added": "✅ Key added to key-server for <b>{username}</b>",
         "key_error": "⚠️ Error adding key. Add manually: <code>{username}</code>",
